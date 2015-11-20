@@ -43,14 +43,17 @@ for(i in seq_len(nrow(mydata))){  #Make replacements
 }   
 
 # Add Descriptive labels to all variable names
+# 1. Read in the labels from the full input file
 allabels <- read.table("./data/UCI_HAR/features.txt")
-#    Insert the Lables for Subject ID and Activity columns
+
+# 2. Insert the Lables for Subject ID and Activity columns
 df1 <- data.frame(-1,"subjectID")
 colnames(df1) <- c("V1","V2")
 df2 <- data.frame(0,"activity")
 colnames(df2) <- c("V1","V2")
 allabels <- rbind(df1,df2,allabels)
 
+# 3. Select only the labels that correspond to the columns we selected for the data
 mylabels <- allabels[c(1,2,3,4,5,6,7,8,
                      43,44,45,46,47,48,
                      83,84,85,86,87,88,
@@ -65,8 +68,18 @@ mylabels <- allabels[c(1,2,3,4,5,6,7,8,
                      531,532,544,545),]
 
 
-for(i in seq_len(68)){  #Make replacements
-    colnames(mydata)[i] <- as.character(mylabels[i,2])
+# 4. Now replace the lables names in our data frame but replace the "()" characters
+#    with a single period and add ".avg" to the end of columns 3 to the 68.
+#    This will make the labels better when reading the data back into R when we 
+#    write the data frame out as a text file.
+for(i in seq_len(68)){
+    label <- as.character(mylabels[i,2])
+    if(i > 2){
+        label <- sub("()","",label, fixed = TRUE)
+        label <- gsub("-",".",label, fixed = TRUE)
+        label <- paste(label, ".avg", sep = "") 
+    }
+    colnames(mydata)[i] <- label
 }
 
 # Create Long data so we can average all the values
@@ -81,4 +94,4 @@ data_avg <- ddply(data_long, c("subjectID", "activity", "mykey"),
 data_wide <- spread(data_avg, mykey, avg_value)
 
 # Write Data Frame to a File
-write.table(data_wide, file = "activity_sum.txt", row.names = FALSE)
+write.table(data_wide, file = "activity_avg.txt", row.names = FALSE)
