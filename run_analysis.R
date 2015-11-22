@@ -1,19 +1,16 @@
 library(tidyr)
 library(plyr)
 
-# set working direcotry
-setwd("C:/Users/rwim2/Desktop/R-Coursera")
-
 # Read Test Data and Add Subject and Activity
-data <- read.table("./data/UCI_HAR/test/X_test.txt")
-subject <- read.table("./data/UCI_HAR/test/subject_test.txt")
-activity <- read.table("./data/UCI_HAR/test/Y_test.txt")
+data <- read.table("X_test.txt")
+subject <- read.table("subject_test.txt")
+activity <- read.table("Y_test.txt")
 test <- cbind(subject, activity, data)
 
 # Read Train Data and Add Subject and Activity
-data <- read.table("./data/UCI_HAR/train/X_train.txt")
-subject <- read.table("./data/UCI_HAR/train/subject_train.txt")
-activity <- read.table("./data/UCI_HAR/train/Y_train.txt")
+data <- read.table("X_train.txt")
+subject <- read.table("subject_train.txt")
+activity <- read.table("Y_train.txt")
 train <- cbind(subject, activity, data)
 
 # Combine into one dataseet
@@ -37,14 +34,14 @@ mydata <- all_data[c(1,2,3,4,5,6,7,8,
                      531,532,544,545)]
 
 # Replave Activity number with descriptive names
-actnames <- read.table("./data/UCI_HAR/activity_labels.txt")
+actnames <- read.table("activity_labels.txt")
 for(i in seq_len(nrow(mydata))){  #Make replacements
     mydata[i,2] <- as.character(actnames[mydata[i,2],2])
 }   
 
 # Add Descriptive labels to all variable names
 # 1. Read in the labels from the full input file
-allabels <- read.table("./data/UCI_HAR/features.txt")
+allabels <- read.table("features.txt")
 
 # 2. Insert the Lables for Subject ID and Activity columns
 df1 <- data.frame(-1,"subjectID")
